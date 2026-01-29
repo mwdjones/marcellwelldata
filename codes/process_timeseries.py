@@ -28,8 +28,8 @@ Data sources:
     Precipitation -- EDI edi.849.2 Marcell Experimental Forest 15-minute precipitation, 2010 - ongoing (Updated 2022-03-04)
     Bog Well Elevation -- EDI edi.562.2 Marcell Experimental Forest daily peatland water table elevation, 1961 - ongoing (Updated 2021-02-16)
     
-MWJ - Updated 7/20/2022
-2018-2020 data has been processed and saved to the final location. Data (above) is needed to continue processing the data
+MWJ - Updated 1/29/2026
+7/20/2022: 2018-2020 data has been processed and saved to the final location. Data (above) is needed to continue processing the data
 from 2021 and 2022 which Anne sent last month. Two wells, S1 in S2 and S2 in S6 are showing large falls in water table
 between 2019 and 2020 likely caused by shifts in the surveying (?)
 """
@@ -37,7 +37,7 @@ between 2019 and 2020 likely caused by shifts in the surveying (?)
 #%%
 ''' IMPORT & EXPORT OPTIONS '''
 # well and bog selections
-wellname = 'S6N3'
+wellname = 'S6N1'
 year = '2019'
 bogname = 'S6'
 print(wellname, year)
@@ -56,15 +56,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import find_peaks
 from numba import jit
+import datetime as dt
 
 ''' FOLDER DIRECTORIES'''
-folderpath = 'C:/Users/marie/Desktop/Feng Research/Data/Peatland Water Chemistry/Organized-20211102T181926Z-001/Organized/'
-
+folderpath = '../data/'
 filepath = folderpath + 'consolidated_logger.xlsx'
-notepath = folderpath + 'Raw from Anne/Well notes/Well_Piezo piezometers_210226.xlsx' #Dates got reconfigured in the new data file -- make sure that they transfer okay
-precippath = folderpath + 'Atm_data/S2_precip2.xlsx'
-BPpath = folderpath + 'Atm_data/S2bog_BP.xlsx'
-bogwellpath = 'C:/Users/marie/Desktop/Publications/DOE MEF Water Table Data pub - edi.1126.1/MEF_daily_peatland_water_table.xlsx'
+notepath = folderpath + 'Raw_from_Anne/Well_Piezo measurements.xlsx' #Dates got reconfigured in the new data file -- make sure that they transfer okay
+precippath = folderpath + 'S2_precip2.xlsx'
+BPpath = folderpath + 'S2bog_BP.xlsx'
+bogwellpath = folderpath + 'MEF_daily_peatland_water_table.xlsx'
 
 ''' SUPPORTING FUNCTIONS AND DICTIONARIES '''
 # =============================================================================
@@ -108,13 +108,15 @@ elevs0 = {'KF42W': {'2018': 422.66, '2019':422.68, '2020':422.67, '2021':422.69}
 ''' DATA IMPORT '''
 # import well data
 sheet_name = wellname + '_' + year
-welldata = pd.read_excel(filepath, sheet_name=sheet_name, parse_dates=[['Date', 'Time']])
+welldata = pd.read_excel(filepath, sheet_name=sheet_name)
+welldata['Date_Time'] = pd.to_datetime(welldata.Date.astype(str) + ' ' + welldata.Time.astype(str))
 logger_level = welldata['LEVEL'][:]
 logger_temp = welldata['TEMPERATURE'][:]
 logger_time = welldata['Date_Time'][:]
 
 # import notes
-notes = pd.read_excel(notepath, parse_dates=[['Date', 'Time']])
+notes = pd.read_excel(notepath)
+notes['Date_Time'] = pd.to_datetime(notes.Date.astype(str) + ' ' + notes.Time.astype(str))
 note_time = notes['Date_Time']
 note_dtw = notes['DTW (m)']
 
@@ -130,13 +132,13 @@ precip_time2 = precip_time[istart:iend][::2].reset_index(drop = True)
 precip_data2 = precip_data[istart:iend].groupby(precip_data[istart:iend].index // 2).sum().reset_index(drop = True) # summed to 1/2 hourly
 
 # import BP data    
-##### Don't have BP data for 2021 or 2022 #####
+##### Now have BP through 2023 #####
 BP = pd.read_excel(BPpath, sheet_name=year)
 BP_data = BP['BPnorm_South'][:]  # kPa
 BP_time = BP['TIMESTAMP'][:]
 
 # import bogwell data 
-##### Don't have 2021 or 2022 data for the bog well #####
+##### Have bogwell through 2023 #####
 bogwell = pd.read_excel(bogwellpath, sheet_name=bogname)
 bogwell_date = bogwell['DATE']
 bogwell_wte = bogwell['WTE']
