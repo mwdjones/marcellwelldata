@@ -29,6 +29,7 @@ Data sources:
     Bog Well Elevation -- EDI edi.562.2 Marcell Experimental Forest daily peatland water table elevation, 1961 - ongoing (Updated 2021-02-16)
     
 MWJ - Updated 1/29/2026
+Added break point dicts and data for 2021, 2022, 2023 (through new BP data). Do we have surveying data for these new years? If not, use the old ones?
 7/20/2022: 2018-2020 data has been processed and saved to the final location. Data (above) is needed to continue processing the data
 from 2021 and 2022 which Anne sent last month. Two wells, S1 in S2 and S2 in S6 are showing large falls in water table
 between 2019 and 2020 likely caused by shifts in the surveying (?)
@@ -37,9 +38,9 @@ between 2019 and 2020 likely caused by shifts in the surveying (?)
 #%%
 ''' IMPORT & EXPORT OPTIONS '''
 # well and bog selections
-wellname = 'S6N1'
-year = '2019'
-bogname = 'S6'
+wellname = 'KF42W'
+year = '2021'
+bogname = 'S2'
 print(wellname, year)
 
 # spike detection and plotting options
